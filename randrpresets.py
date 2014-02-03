@@ -4,9 +4,10 @@ from gi.repository import Gtk
 
 class RandrPresetsWindow(Gtk.Window):
 
-  def __init__(self, presets):
+  def __init__(self, presets, post_command):
     Gtk.Window.__init__(self, title="RandRpresets")
 
+    self.post_command = post_command
     self.presets = presets
 
     self.set_border_width(10)
@@ -39,6 +40,7 @@ class RandrPresetsWindow(Gtk.Window):
 
   def activate_button_clicked(self, widget, button_id):
     os.system(presets[button_id].command())
+    os.system(post_command)
     Gtk.main_quit()
 
   def screen_button_clicked(self, widget, preset_id, screen_id):
@@ -68,8 +70,9 @@ class Preset:
 preset_a = Preset("Only internal", [["eDP1", True], ["VGA1", False], ["HDMI1", False]])
 preset_b = Preset("Internal+VGA", [["eDP1", True], ["VGA1", True], ["HDMI1", False]])
 preset_c = Preset("Internal+HDMI", [["eDP1", True], ["VGA1", False], ["HDMI1", True]])
+post_command = "sh ~/.i3/wmstuff.sh"
 presets = [preset_a, preset_b, preset_c]
-win = RandrPresetsWindow(presets)
+win = RandrPresetsWindow(presets, post_command)
 win.connect("delete-event", Gtk.main_quit)
 win.show_all()
 Gtk.main()
