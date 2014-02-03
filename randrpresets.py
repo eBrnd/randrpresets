@@ -18,13 +18,15 @@ class RandrPresetsWindow(Gtk.Window):
     listbox.set_selection_mode(Gtk.SelectionMode.NONE)
     hbox.pack_start(listbox, True, True, 0)
 
-    for preset in self.presets:
+    for preset_index in range(len(self.presets)):
+      preset = presets[preset_index]
       row = Gtk.ListBoxRow()
       hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=30)
       row.add(hbox)
 
       activate_button = Gtk.Button(label=preset.name)
       hbox.pack_start(activate_button, True, True, 0)
+      activate_button.connect("clicked", self.button_clicked, preset_index)
       for screen in preset.screens:
         screen_check_button = Gtk.CheckButton(label=screen[0])
         screen_check_button.set_active(screen[1])
@@ -32,10 +34,24 @@ class RandrPresetsWindow(Gtk.Window):
 
       listbox.add(row)
 
+  def button_clicked(self, widget, button_id):
+    print(presets[button_id].command())
+
 class Preset:
   def __init__(self, name, screens=[]):
     self.name = name
     self.screens = screens
+
+  def command(self):
+    res = 'xrandr'
+    for screen in self.screens:
+      res = res + ' --output ' + screen[0]
+      if screen[1]:
+        res = res + " --auto"
+      else:
+        res = res + " --off"
+
+    return res
 
 preset_a = Preset("Only internal", [["eDP1", True], ["VGA1", False], ["HDMI1", False]])
 preset_b = Preset("Internal+VGA", [["eDP1", True], ["VGA1", True], ["HDMI1", False]])
