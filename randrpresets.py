@@ -26,16 +26,21 @@ class RandrPresetsWindow(Gtk.Window):
 
       activate_button = Gtk.Button(label=preset.name)
       hbox.pack_start(activate_button, True, True, 0)
-      activate_button.connect("clicked", self.button_clicked, preset_index)
-      for screen in preset.screens:
+      activate_button.connect("clicked", self.activate_button_clicked, preset_index)
+      for screen_index in range(len(preset.screens)):
+        screen = preset.screens[screen_index]
         screen_check_button = Gtk.CheckButton(label=screen[0])
         screen_check_button.set_active(screen[1])
+        screen_check_button.connect("clicked", self.screen_button_clicked, preset_index, screen_index)
         hbox.pack_start(screen_check_button, True, True, 0)
 
       listbox.add(row)
 
-  def button_clicked(self, widget, button_id):
+  def activate_button_clicked(self, widget, button_id):
     print(presets[button_id].command())
+
+  def screen_button_clicked(self, widget, preset_id, screen_id):
+    presets[preset_id].screens[screen_id][1] = widget.get_active()
 
 class Preset:
   def __init__(self, name, screens=[]):
