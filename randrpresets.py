@@ -2,6 +2,8 @@
 import os
 from gi.repository import Gtk
 
+from config import presets, post_command
+
 class RandrPresetsWindow(Gtk.Window):
 
   def __init__(self, presets, post_command):
@@ -64,15 +66,14 @@ class Preset:
       else:
         res = res + " --off"
 
-
     return res
 
-preset_a = Preset("Only internal", [["eDP1", True], ["VGA1", False], ["HDMI1", False]])
-preset_b = Preset("Internal+VGA", [["eDP1", True], ["VGA1", True], ["HDMI1", False]])
-preset_c = Preset("Internal+HDMI", [["eDP1", True], ["VGA1", False], ["HDMI1", True]])
-post_command = "sh ~/.i3/wmstuff.sh"
-presets = [preset_a, preset_b, preset_c]
-win = RandrPresetsWindow(presets, post_command)
+
+preset_list = []
+for preset in presets:
+  preset_list.append(Preset(preset[0], preset[1]))
+
+win = RandrPresetsWindow(preset_list, post_command)
 win.connect("delete-event", Gtk.main_quit)
 win.show_all()
 Gtk.main()
