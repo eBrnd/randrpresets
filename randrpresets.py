@@ -1,4 +1,5 @@
 #!/usr/bin/python
+import os
 from gi.repository import Gtk
 
 class RandrPresetsWindow(Gtk.Window):
@@ -37,7 +38,8 @@ class RandrPresetsWindow(Gtk.Window):
       listbox.add(row)
 
   def activate_button_clicked(self, widget, button_id):
-    print(presets[button_id].command())
+    os.system(presets[button_id].command())
+    Gtk.main_quit()
 
   def screen_button_clicked(self, widget, preset_id, screen_id):
     presets[preset_id].screens[screen_id][1] = widget.get_active()
@@ -49,12 +51,17 @@ class Preset:
 
   def command(self):
     res = 'xrandr'
+    prev_monitor = ""
     for screen in self.screens:
       res = res + ' --output ' + screen[0]
       if screen[1]:
         res = res + " --auto"
+        if prev_monitor:
+          res = res + " --right of " + prev_monitor
+        prev_monitor = screen[0]
       else:
         res = res + " --off"
+
 
     return res
 
