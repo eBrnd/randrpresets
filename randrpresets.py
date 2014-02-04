@@ -19,20 +19,17 @@ class RandrPresetsWindow(Gtk.Window):
     self.headerbar.props.show_close_button = True
     self.headerbar.props.title = "RandRpresets"
     button = Gtk.Button()
-    image = Gtk.Image.new_from_stock(Gtk.STOCK_SAVE, Gtk.IconSize.BUTTON)
-    button.add(image)
+    button.add(Gtk.Image.new_from_stock(Gtk.STOCK_SAVE, Gtk.IconSize.BUTTON))
     button.connect("clicked", self.save_button_clicked)
     self.headerbar.pack_end(button)
 
     button = Gtk.Button()
-    image = Gtk.Image.new_from_stock(Gtk.STOCK_EDIT, Gtk.IconSize.BUTTON)
-    button.add(image)
+    button.add(Gtk.Image.new_from_stock(Gtk.STOCK_EDIT, Gtk.IconSize.BUTTON))
     button.connect("clicked", self.edit_post_command_button_clicked)
     self.headerbar.pack_end(button)
 
     button = Gtk.Button()
-    image = Gtk.Image.new_from_stock(Gtk.STOCK_ADD, Gtk.IconSize.BUTTON)
-    button.add(image)
+    button.add(Gtk.Image.new_from_stock(Gtk.STOCK_ADD, Gtk.IconSize.BUTTON))
     button.connect("clicked", self.add_button_clicked)
     self.headerbar.pack_end(button)
 
@@ -106,8 +103,7 @@ class RandrPresetsWindow(Gtk.Window):
       hbox.pack_start(screen_check_button, True, True, 0)
 
     button = Gtk.Button()
-    image = Gtk.Image.new_from_stock(Gtk.STOCK_DELETE, Gtk.IconSize.BUTTON)
-    button.add(image)
+    button.add(Gtk.Image.new_from_stock(Gtk.STOCK_DELETE, Gtk.IconSize.BUTTON))
     button.connect("clicked", self.delete_button_clicked, preset_index)
     hbox.pack_start(button, True, True, 0)
 
