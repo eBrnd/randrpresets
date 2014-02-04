@@ -3,8 +3,6 @@ import os
 from gi.repository import Gtk, Gio
 import json
 
-from config import presets, post_command
-
 class RandrPresetsWindow(Gtk.Window):
 
   def __init__(self, presets, post_command):
@@ -58,14 +56,16 @@ class RandrPresetsWindow(Gtk.Window):
     Gtk.main_quit()
 
   def screen_button_clicked(self, widget, preset_id, screen_id):
-    presets[preset_id].screens[screen_id][1] = widget.get_active()
+    self.presets[preset_id].screens[screen_id][1] = widget.get_active()
 
   def save_button_clicked(self, widget):
     preset_list = []
     for preset in self.presets:
       preset_list.append([preset.name, preset.screens])
-    res = json.dumps({ "presets" : preset_list, "post_command" : self.post_command })
-    print(res)
+    configstring = json.dumps({ "presets" : preset_list, "post_command" : self.post_command })
+    with open(configfilename, 'w') as configfile:
+      configfile.write(configstring)
+    configfile.close()
 
 class Preset:
   def __init__(self, name, screens=[]):
@@ -87,6 +87,13 @@ class Preset:
 
     return res
 
+
+configfilename = os.environ["HOME"] + "/" + ".randrpresets.json"
+with open(configfilename, 'r') as configfile:
+  config = configfile.read()
+  configdic = json.loads(config)
+presets = configdic["presets"]
+post_command = configdic["post_command"]
 
 preset_list = []
 for preset in presets:
