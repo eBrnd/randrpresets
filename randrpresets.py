@@ -61,7 +61,8 @@ class RandrPresetsWindow(Gtk.Window):
     preset_list = []
     for preset in self.presets:
       preset_list.append([preset.name, preset.screens])
-    configstring = json.dumps({ "presets" : preset_list, "post_command" : self.post_command, "screens" : available_screens },
+    configstring = json.dumps({ "presets" : preset_list, "post_command" : self.post_command,
+                                "screens" : available_screens },
                               indent=2, separators=(',', ': '))
     with open(configfilename, 'w') as configfile:
       configfile.write(configstring)
@@ -81,6 +82,16 @@ class RandrPresetsWindow(Gtk.Window):
     self.listbox.add(row)
     self.show_all()
 
+  def delete_button_clicked(self, widget, preset_index):
+    del self.presets[preset_index]
+    # TODO is there a more elegant way than to recreate the whole list?
+    for child in self.listbox.get_children():
+      self.listbox.remove(child)
+    for preset_index in range(len(self.presets)):
+      row = self.make_listbox_row(preset_index)
+      self.listbox.add(row)
+    self.show_all()
+
   def make_listbox_row(self, preset_index):
     row = Gtk.ListBoxRow()
     hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=30)
@@ -93,6 +104,13 @@ class RandrPresetsWindow(Gtk.Window):
       screen_check_button.set_active(self.presets[preset_index].screens[screen_index])
       screen_check_button.connect("clicked", self.screen_button_clicked, preset_index, screen_index)
       hbox.pack_start(screen_check_button, True, True, 0)
+
+    button = Gtk.Button()
+    image = Gtk.Image.new_from_stock(Gtk.STOCK_DELETE, Gtk.IconSize.BUTTON)
+    button.add(image)
+    button.connect("clicked", self.delete_button_clicked, preset_index)
+    hbox.pack_start(button, True, True, 0)
+
     return row
 
 
