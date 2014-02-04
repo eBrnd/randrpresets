@@ -62,7 +62,8 @@ class RandrPresetsWindow(Gtk.Window):
     preset_list = []
     for preset in self.presets:
       preset_list.append([preset.name, preset.screens])
-    configstring = json.dumps({ "presets" : preset_list, "post_command" : self.post_command })
+    configstring = json.dumps({ "presets" : preset_list, "post_command" : self.post_command },
+                              indent=2, separators=(',', ': '))
     with open(configfilename, 'w') as configfile:
       configfile.write(configstring)
     configfile.close()
