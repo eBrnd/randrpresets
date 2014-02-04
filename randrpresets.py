@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import os
+import subprocess
 from gi.repository import Gtk, Gio
 import json
 
@@ -119,6 +120,15 @@ class Preset:
 
     return res
 
+def detect_screens():
+  res = []
+  randr = bytes.decode(subprocess.check_output("xrandr"))
+  for line in randr.split('\n'):
+    if ":" not in line:
+      if len(line) > 0 and line[0:2] != "  ":
+        res.append(line.split(" ")[0])
+  return res
+
 
 configfilename = os.environ["HOME"] + "/" + ".randrpresets.json"
 with open(configfilename, 'r') as configfile:
@@ -126,7 +136,8 @@ with open(configfilename, 'r') as configfile:
   configdic = json.loads(config)
 presets = configdic["presets"]
 post_command = configdic["post_command"]
-
+available_screens = detect_screens()
+print(available_screens)
 preset_list = []
 for preset in presets:
   preset_list.append(Preset(preset[0], preset[1]))
