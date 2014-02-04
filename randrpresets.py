@@ -50,26 +50,26 @@ class RandrPresetsWindow(Gtk.Window):
       activate_button.connect("clicked", self.activate_button_clicked, preset_index)
       for screen_index in range(len(preset.screens)):
         screen = preset.screens[screen_index]
-        screen_check_button = Gtk.CheckButton(label=screen[0])
-        screen_check_button.set_active(screen[1])
+        screen_check_button = Gtk.CheckButton(label=available_screens[screen_index])
+        screen_check_button.set_active(screen)
         screen_check_button.connect("clicked", self.screen_button_clicked, preset_index, screen_index)
         hbox.pack_start(screen_check_button, True, True, 0)
 
       listbox.add(row)
 
   def activate_button_clicked(self, widget, button_id):
-    os.system(presets[button_id].command())
+    os.system(self.presets[button_id].command())
     os.system(post_command)
     Gtk.main_quit()
 
   def screen_button_clicked(self, widget, preset_id, screen_id):
-    self.presets[preset_id].screens[screen_id][1] = widget.get_active()
+    self.presets[preset_id].screens[screen_id] = widget.get_active()
 
   def save_button_clicked(self, widget):
     preset_list = []
     for preset in self.presets:
       preset_list.append([preset.name, preset.screens])
-    configstring = json.dumps({ "presets" : preset_list, "post_command" : self.post_command },
+    configstring = json.dumps({ "presets" : preset_list, "post_command" : self.post_command, "screens" : available_screens },
                               indent=2, separators=(',', ': '))
     with open(configfilename, 'w') as configfile:
       configfile.write(configstring)
@@ -108,13 +108,13 @@ class Preset:
   def command(self):
     res = 'xrandr'
     prev_monitor = ""
-    for screen in self.screens:
-      res = res + ' --output ' + screen[0]
-      if screen[1]:
+    for screen_index in range(len(available_screens)):
+      res = res + ' --output ' + available_screens[screen_index]
+      if self.screens[screen_index]:
         res = res + " --auto"
         if prev_monitor:
           res = res + " --right of " + prev_monitor
-        prev_monitor = screen[0]
+        prev_monitor = available_screens[screen_index]
       else:
         res = res + " --off"
 
@@ -136,8 +136,8 @@ with open(configfilename, 'r') as configfile:
   configdic = json.loads(config)
 presets = configdic["presets"]
 post_command = configdic["post_command"]
-available_screens = detect_screens()
-print(available_screens)
+# available_screens = detect_screens() TODO detect screens when editing config
+available_screens = configdic["screens"]
 preset_list = []
 for preset in presets:
   preset_list.append(Preset(preset[0], preset[1]))
