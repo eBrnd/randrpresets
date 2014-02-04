@@ -14,16 +14,22 @@ class RandrPresetsWindow(Gtk.Window):
     self.set_border_width(10)
     self.set_default_size(200, 200)
 
-    hb = Gtk.HeaderBar()
-    hb.props.show_close_button = True
-    hb.props.title = "RandRpresets"
+    self.headerbar = Gtk.HeaderBar()
+    self.headerbar.props.show_close_button = True
+    self.headerbar.props.title = "RandRpresets"
     button = Gtk.Button()
     image = Gtk.Image.new_from_stock(Gtk.STOCK_SAVE, Gtk.IconSize.BUTTON)
     button.add(image)
     button.connect("clicked", self.save_button_clicked)
-    hb.pack_end(button)
+    self.headerbar.pack_end(button)
 
-    self.set_titlebar(hb)
+    button = Gtk.Button()
+    image = Gtk.Image.new_from_stock(Gtk.STOCK_EDIT, Gtk.IconSize.BUTTON)
+    button.add(image)
+    button.connect("clicked", self.edit_post_command_button_clicked)
+    self.headerbar.pack_end(button)
+
+    self.set_titlebar(self.headerbar)
 
     hbox = Gtk.Box(spacing=6)
     self.add(hbox)
@@ -67,6 +73,31 @@ class RandrPresetsWindow(Gtk.Window):
     with open(configfilename, 'w') as configfile:
       configfile.write(configstring)
     configfile.close()
+
+  def edit_post_command_button_clicked(self, widget):
+    dialog = EditPostCommandDialog(self, self.post_command)
+    response = dialog.run()
+    if response == Gtk.ResponseType.OK:
+      self.post_command = dialog.get_text()
+    dialog.destroy()
+
+
+class EditPostCommandDialog(Gtk.Dialog):
+  def __init__(self, parent, existing_post_command):
+    Gtk.Dialog.__init__(self, "Edit Post-Command", parent, 0,
+                        (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                        Gtk.STOCK_OK, Gtk.ResponseType.OK))
+    label = Gtk.Label("This command is executed after a preset is applied.")
+    box = self.get_content_area()
+    box.pack_start(label, True, True, 0)
+    self.entry = Gtk.Entry()
+    self.entry.set_text(existing_post_command)
+    box.pack_start(self.entry, True, True, 0)
+    self.show_all()
+
+  def get_text(self):
+    return self.entry.get_text()
+
 
 class Preset:
   def __init__(self, name, screens=[]):
