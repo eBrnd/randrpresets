@@ -86,7 +86,7 @@ class RandrPresetsWindow(Gtk.Window):
     self.recreate_list()
 
   def recreate_list(self):
-    # TODO is there a more elegant way to remove / rename an elemtent
+    # TODO is there a more elegant way to remove / rename an element
     # than to recreate the whole list?
     for child in self.listbox.get_children():
       self.listbox.remove(child)
@@ -111,6 +111,7 @@ class RandrPresetsWindow(Gtk.Window):
     hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=30)
     row.add(hbox)
     activate_button = Gtk.Button(label=self.presets[preset_index].name)
+    activate_button.connect("clicked", self.activate_button_clicked, preset_index)
     hbox.pack_start(activate_button, True, True, 0)
     for screen_index in range(len(available_screens)):
       screen_name = available_screens[screen_index]
