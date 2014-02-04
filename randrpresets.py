@@ -66,7 +66,9 @@ class RandrPresetsWindow(Gtk.Window):
     configfile.close()
 
   def edit_post_command_button_clicked(self, widget):
-    dialog = EditPostCommandDialog(self, self.post_command)
+    dialog = EditDialog(self, "Edit Post-Command",
+                                   "This command is executed after a preset is applied.",
+                                   self.post_command)
     response = dialog.run()
     if response == Gtk.ResponseType.OK:
       self.post_command = dialog.get_text()
@@ -81,13 +83,28 @@ class RandrPresetsWindow(Gtk.Window):
 
   def delete_button_clicked(self, widget, preset_index):
     del self.presets[preset_index]
-    # TODO is there a more elegant way than to recreate the whole list?
+    self.recreate_list()
+
+  def recreate_list(self):
+    # TODO is there a more elegant way to remove / rename an elemtent
+    # than to recreate the whole list?
     for child in self.listbox.get_children():
       self.listbox.remove(child)
     for preset_index in range(len(self.presets)):
       row = self.make_listbox_row(preset_index)
       self.listbox.add(row)
     self.show_all()
+
+  def edit_button_clicked(self, widget, preset_index):
+    dialog = EditDialog(self, "Edit Preset Name",
+                        "Enter the new name for the preset.",
+                        self.presets[preset_index].name)
+    response = dialog.run()
+    if response == Gtk.ResponseType.OK:
+      new_name = dialog.get_text()
+      self.presets[preset_index].name = new_name
+      self.recreate_list()
+    dialog.destroy()
 
   def make_listbox_row(self, preset_index):
     row = Gtk.ListBoxRow()
@@ -107,20 +124,25 @@ class RandrPresetsWindow(Gtk.Window):
     button.connect("clicked", self.delete_button_clicked, preset_index)
     hbox.pack_start(button, True, True, 0)
 
+    button = Gtk.Button()
+    button.add(Gtk.Image.new_from_stock(Gtk.STOCK_EDIT, Gtk.IconSize.BUTTON))
+    button.connect("clicked", self.edit_button_clicked, preset_index)
+    hbox.pack_start(button, True, True, 0)
+
     return row
 
 
 
-class EditPostCommandDialog(Gtk.Dialog):
-  def __init__(self, parent, existing_post_command):
-    Gtk.Dialog.__init__(self, "Edit Post-Command", parent, 0,
+class EditDialog(Gtk.Dialog):
+  def __init__(self, parent, title, description, existing_text):
+    Gtk.Dialog.__init__(self, title, parent, 0,
                         (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                         Gtk.STOCK_OK, Gtk.ResponseType.OK))
-    label = Gtk.Label("This command is executed after a preset is applied.")
+    label = Gtk.Label(description)
     box = self.get_content_area()
     box.pack_start(label, True, True, 0)
     self.entry = Gtk.Entry()
-    self.entry.set_text(existing_post_command)
+    self.entry.set_text(existing_text)
     box.pack_start(self.entry, True, True, 0)
     self.show_all()
 
