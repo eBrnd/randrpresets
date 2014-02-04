@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import os
-from gi.repository import Gtk
+from gi.repository import Gtk, Gio
+import json
 
 from config import presets, post_command
 
@@ -14,6 +15,17 @@ class RandrPresetsWindow(Gtk.Window):
 
     self.set_border_width(10)
     self.set_default_size(200, 200)
+
+    hb = Gtk.HeaderBar()
+    hb.props.show_close_button = True
+    hb.props.title = "RandRpresets"
+    button = Gtk.Button()
+    image = Gtk.Image.new_from_stock(Gtk.STOCK_SAVE, Gtk.IconSize.BUTTON)
+    button.add(image)
+    button.connect("clicked", self.save_button_clicked)
+    hb.pack_end(button)
+
+    self.set_titlebar(hb)
 
     hbox = Gtk.Box(spacing=6)
     self.add(hbox)
@@ -47,6 +59,13 @@ class RandrPresetsWindow(Gtk.Window):
 
   def screen_button_clicked(self, widget, preset_id, screen_id):
     presets[preset_id].screens[screen_id][1] = widget.get_active()
+
+  def save_button_clicked(self, widget):
+    preset_list = []
+    for preset in self.presets:
+      preset_list.append([preset.name, preset.screens])
+    res = json.dumps({ "presets" : preset_list, "post_command" : self.post_command })
+    print(res)
 
 class Preset:
   def __init__(self, name, screens=[]):
