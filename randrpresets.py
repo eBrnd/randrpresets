@@ -30,14 +30,20 @@ class RandrPresetsWindow(Gtk.Window):
     button.connect("clicked", self.edit_post_command_button_clicked)
     self.headerbar.pack_end(button)
 
+    button = Gtk.Button()
+    image = Gtk.Image.new_from_stock(Gtk.STOCK_ADD, Gtk.IconSize.BUTTON)
+    button.add(image)
+    button.connect("clicked", self.add_button_clicked)
+    self.headerbar.pack_end(button)
+
     self.set_titlebar(self.headerbar)
 
     hbox = Gtk.Box(spacing=6)
     self.add(hbox)
 
-    listbox = Gtk.ListBox()
-    listbox.set_selection_mode(Gtk.SelectionMode.NONE)
-    hbox.pack_start(listbox, True, True, 0)
+    self.listbox = Gtk.ListBox()
+    self.listbox.set_selection_mode(Gtk.SelectionMode.NONE)
+    hbox.pack_start(self.listbox, True, True, 0)
 
     for preset_index in range(len(self.presets)):
       preset = presets[preset_index]
@@ -55,7 +61,7 @@ class RandrPresetsWindow(Gtk.Window):
         screen_check_button.connect("clicked", self.screen_button_clicked, preset_index, screen_index)
         hbox.pack_start(screen_check_button, True, True, 0)
 
-      listbox.add(row)
+      self.listbox.add(row)
 
   def activate_button_clicked(self, widget, button_id):
     os.system(self.presets[button_id].command())
@@ -81,6 +87,24 @@ class RandrPresetsWindow(Gtk.Window):
     if response == Gtk.ResponseType.OK:
       self.post_command = dialog.get_text()
     dialog.destroy()
+
+  def add_button_clicked(self, widget):
+    preset = Preset("New Preset", [False]*len(available_screens))
+    self.presets.append(preset)
+    row = Gtk.ListBoxRow()
+    hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=30)
+    row.add(hbox)
+    activate_button = Gtk.Button(label=preset.name)
+    hbox.pack_start(activate_button, True, True, 0)
+    # XXX i smell code duplication!!
+    for screen_index in range(len(available_screens)):
+      screen = available_screens[screen_index]
+      screen_check_button = Gtk.CheckButton(label=screen)
+      screen_check_button.set_active(False)
+      screen_check_button.connect("clicked", self.screen_button_clicked, len(self.presets)-1, screen_index)
+      hbox.pack_start(screen_check_button, True, True, 0)
+    self.listbox.add(row)
+    self.show_all()
 
 
 class EditPostCommandDialog(Gtk.Dialog):
