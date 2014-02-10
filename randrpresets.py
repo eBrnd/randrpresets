@@ -47,8 +47,8 @@ class RandrPresetsWindow(Gtk.Window):
       self.listbox.add(row)
 
   def activate_button_clicked(self, widget, button_id):
-    os.system(self.presets[button_id].command())
-    os.system(post_command)
+    subprocess.check_call(self.presets[button_id].command())
+    subprocess.check_call(self.post_command.split(' '))
     Gtk.main_quit()
 
   def screen_button_clicked(self, widget, preset_id, screen_id):
@@ -157,17 +157,17 @@ class Preset:
     self.screens = screens
 
   def command(self):
-    res = 'xrandr'
+    res = ['xrandr']
     prev_monitor = ""
     for screen_index in range(len(available_screens)):
-      res = res + ' --output ' + available_screens[screen_index]
+      res = res + [ '--output', available_screens[screen_index] ]
       if self.screens[screen_index]:
-        res = res + " --auto"
+        res = res + [ '--auto' ]
         if prev_monitor:
-          res = res + " --right-of " + prev_monitor
+          res = res + [ '--right-of', prev_monitor ]
         prev_monitor = available_screens[screen_index]
       else:
-        res = res + " --off"
+        res = res + [ '--off' ]
 
     return res
 
