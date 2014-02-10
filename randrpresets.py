@@ -164,7 +164,7 @@ class Preset:
       if self.screens[screen_index]:
         res = res + " --auto"
         if prev_monitor:
-          res = res + " --right of " + prev_monitor
+          res = res + " --right-of " + prev_monitor
         prev_monitor = available_screens[screen_index]
       else:
         res = res + " --off"
