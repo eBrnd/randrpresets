@@ -13,7 +13,7 @@ class RandrPresetsWindow(Gtk.Window):
     self.presets = presets
 
     self.set_border_width(10)
-    self.set_default_size(200, 200)
+    self.set_default_size(400, 200)
 
     self.headerbar = Gtk.HeaderBar()
     self.headerbar.props.show_close_button = True
@@ -150,6 +150,15 @@ class EditDialog(Gtk.Dialog):
   def get_text(self):
     return self.entry.get_text()
 
+class ErrorDialog(Gtk.Dialog):
+  def __init__(self, parent, title, description):
+    Gtk.Dialog.__init__(self, title, parent, 0,
+                        (Gtk.STOCK_OK, Gtk.ResponseType.OK))
+    label = Gtk.Label(description)
+    box = self.get_content_area()
+    box.pack_start(label, True, True, 0)
+    self.show_all()
+
 
 class Preset:
   def __init__(self, name, screens=[]):
@@ -187,11 +196,18 @@ with open(configfilename, 'r') as configfile:
   configdic = json.loads(config)
 presets = configdic["presets"]
 post_command = configdic["post_command"]
-# available_screens = detect_screens() TODO detect screens when editing config
 available_screens = configdic["screens"]
 preset_list = []
-for preset in presets:
-  preset_list.append(Preset(preset[0], preset[1]))
+if(available_screens == detect_screens()):
+  for preset in presets:
+    preset_list.append(Preset(preset[0], preset[1]))
+else:
+  dialog = ErrorDialog(0, "randrpresets config file error", """
+    Your configfile does not seem to match your actual screen setup :(
+    Starting over with an empty config.
+  """)
+  dialog.run()
+  dialog.destroy()
 
 win = RandrPresetsWindow(preset_list, post_command)
 win.connect("delete-event", Gtk.main_quit)
