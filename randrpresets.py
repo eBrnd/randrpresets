@@ -116,6 +116,7 @@ class RandrPresetsWindow(Gtk.Window):
     activate_button = Gtk.Button(label=self.presets[preset_index].name)
     activate_button.connect("clicked", self.activate_button_clicked, preset_index)
     activate_button.set_tooltip_text('Apply preset "' + self.presets[preset_index].name + '".')
+    activate_button.set_size_request(200, -1)
     hbox.pack_start(activate_button, True, True, 0)
     for screen_index in range(len(available_screens)):
       screen_name = available_screens[screen_index]
