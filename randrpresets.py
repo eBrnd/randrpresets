@@ -21,16 +21,19 @@ class RandrPresetsWindow(Gtk.Window):
     button = Gtk.Button()
     button.add(Gtk.Image.new_from_stock(Gtk.STOCK_SAVE, Gtk.IconSize.BUTTON))
     button.connect("clicked", self.save_button_clicked)
+    button.set_tooltip_text("Save current config.")
     self.headerbar.pack_end(button)
 
     button = Gtk.Button()
     button.add(Gtk.Image.new_from_stock(Gtk.STOCK_EDIT, Gtk.IconSize.BUTTON))
     button.connect("clicked", self.edit_post_command_button_clicked)
+    button.set_tooltip_text("Edit post-command.")
     self.headerbar.pack_end(button)
 
     button = Gtk.Button()
     button.add(Gtk.Image.new_from_stock(Gtk.STOCK_ADD, Gtk.IconSize.BUTTON))
     button.connect("clicked", self.add_button_clicked)
+    button.set_tooltip_text("Add new preset.")
     self.headerbar.pack_end(button)
 
     self.set_titlebar(self.headerbar)
@@ -112,6 +115,7 @@ class RandrPresetsWindow(Gtk.Window):
     row.add(hbox)
     activate_button = Gtk.Button(label=self.presets[preset_index].name)
     activate_button.connect("clicked", self.activate_button_clicked, preset_index)
+    activate_button.set_tooltip_text('Apply preset "' + self.presets[preset_index].name + '".')
     hbox.pack_start(activate_button, True, True, 0)
     for screen_index in range(len(available_screens)):
       screen_name = available_screens[screen_index]
@@ -123,11 +127,13 @@ class RandrPresetsWindow(Gtk.Window):
     button = Gtk.Button()
     button.add(Gtk.Image.new_from_stock(Gtk.STOCK_DELETE, Gtk.IconSize.BUTTON))
     button.connect("clicked", self.delete_button_clicked, preset_index)
+    button.set_tooltip_text("Delete preset.")
     hbox.pack_start(button, True, True, 0)
 
     button = Gtk.Button()
     button.add(Gtk.Image.new_from_stock(Gtk.STOCK_EDIT, Gtk.IconSize.BUTTON))
     button.connect("clicked", self.edit_button_clicked, preset_index)
+    button.set_tooltip_text("Edit preset name.")
     hbox.pack_start(button, True, True, 0)
 
     return row
