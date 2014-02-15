@@ -1,6 +1,8 @@
 randrpresets
 ============
 
+![Screenshot](screenshot.png)
+
 my new super cool monitor switchung utility.
 --------------------------------------------
 
