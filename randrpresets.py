@@ -198,10 +198,12 @@ presets = configdic["presets"]
 post_command = configdic["post_command"]
 available_screens = configdic["screens"]
 preset_list = []
-if(available_screens == detect_screens()):
+detected_screens = detect_screens()
+if(available_screens == detected_screens):
   for preset in presets:
     preset_list.append(Preset(preset[0], preset[1]))
 else:
+  available_screens = detected_screens
   dialog = ErrorDialog(0, "randrpresets config file error", """
     Your configfile does not seem to match your actual screen setup :(
     Starting over with an empty config.
