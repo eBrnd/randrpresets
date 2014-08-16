@@ -3,7 +3,7 @@ randrpresets
 
 ![Screenshot](screenshot.png)
 
-my new super cool monitor switchung utility.
+my new super cool monitor switching utility.
 --------------------------------------------
 
 Instantly create and apply presets for your xrandr monitor setup.
