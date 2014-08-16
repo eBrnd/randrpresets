@@ -198,12 +198,16 @@ def detect_screens():
 
 
 configfilename = os.environ["HOME"] + "/" + ".randrpresets.json"
-with open(configfilename, 'r') as configfile:
-  config = configfile.read()
-  configdic = json.loads(config)
-presets = configdic["presets"]
-post_command = configdic["post_command"]
-available_screens = configdic["screens"]
+try:
+  with open(configfilename, 'r') as configfile:
+    config = configfile.read()
+    configdic = json.loads(config)
+  presets = configdic["presets"]
+  post_command = configdic["post_command"]
+  available_screens = configdic["screens"]
+except:
+  post_command = ""
+  available_screens = []
 preset_list = []
 detected_screens = detect_screens()
 if(available_screens == detected_screens):
@@ -211,10 +215,10 @@ if(available_screens == detected_screens):
     preset_list.append(Preset(preset[0], preset[1]))
 else:
   available_screens = detected_screens
-  dialog = ErrorDialog(0, "randrpresets config file error", """
-    Your configfile does not seem to match your actual screen setup :(
-    Starting over with an empty config.
-  """)
+  dialog = ErrorDialog(None, "randrpresets config file error", """
+      Your configfile is either missing or does not seem to match your actual screen setup :(
+      Starting over with an empty config.
+    """)
   dialog.run()
   dialog.destroy()
 
