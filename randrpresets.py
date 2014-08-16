@@ -205,7 +205,7 @@ try:
   presets = configdic["presets"]
   post_command = configdic["post_command"]
   available_screens = configdic["screens"]
-except:
+except FileNotFoundError:
   post_command = ""
   available_screens = []
 preset_list = []
